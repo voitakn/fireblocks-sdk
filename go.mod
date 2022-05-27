@@ -1,4 +1,4 @@
-module fireblocks-sdk
+module gitlab.com/fast-rabbit/fireblocks-sdk
 
 go 1.18
 
