@@ -1,68 +1,74 @@
 package account
 
 import (
-	"encoding/json"
+	"fireblocks-sdk"
 	"fmt"
-	"gitlab.com/fast-rabbit/fireblocks-sdk"
 	"net/url"
 )
 
 // GetPaged generates requests for fireblocks.VaultAccounts
-func ListPaged(params *fireblocks.VaultAccountsParams) (*fireblocks.VaultAccounts, error) {
+func ListPaged(params *fireblocks.VaultAccountsParams) ([]byte, error) {
 	var err error
-	var v *url.Values
-	var result *fireblocks.VaultAccounts
+	v := make(url.Values)
+	//var result *fireblocks.VaultAccounts
 
-	if params.NamePrefix != nil {
-		v.Add("namePrefix", *params.NamePrefix)
+	if len(params.NamePrefix) > 0 {
+		v.Add("namePrefix", params.NamePrefix)
 	}
-	if params.NameSuffix != nil {
-		v.Add("nameSuffix", *params.NameSuffix)
+	if len(params.NameSuffix) > 0 {
+		v.Add("nameSuffix", params.NameSuffix)
 	}
-	if params.MinAmountThreshold != nil {
-		v.Add("minAmountThreshold", *params.MinAmountThreshold)
+	if len(params.MinAmountThreshold) > 0 {
+		v.Add("minAmountThreshold", params.MinAmountThreshold)
 	}
-	if params.AssetId != nil {
-		v.Add("assetId", *params.AssetId)
+	if len(params.AssetId) > 0 {
+		v.Add("assetId", params.AssetId)
 	}
-	if params.OrderBy != nil {
-		v.Add("orderBy", *params.OrderBy)
+	if len(params.OrderBy) > 0 {
+		fmt.Println("params.OrderBy", params.OrderBy)
+		v.Add("orderBy", params.OrderBy)
 	}
-	if params.Before != nil {
-		v.Add("before", *params.Before)
+	if len(params.Before) > 0 {
+		v.Add("before", params.Before)
 	}
-	if params.After != nil {
-		v.Add("after", *params.After)
+	if len(params.After) > 0 {
+		v.Add("after", params.After)
 	}
-	if params.Limit != nil {
-		v.Add("limit", fmt.Sprintf(`%v`, *params.Limit))
+	if params.Limit > 0 {
+		v.Add("limit", fmt.Sprintf(`%v`, params.Limit))
 	}
 	response, err := fireblocks.ClientGet("/vault/accounts_paged", v)
 	if err != nil {
 		return nil, err
 	}
-	err = json.Unmarshal(response, &result)
-	if err != nil {
+	//err = json.Unmarshal(response, &result)
+	/*if err != nil {
 		return nil, err
-	}
-	return result, nil
+	}*/
+	return response, nil
 }
 
-func GetById(id string) (*fireblocks.VaultAccount, error) {
+func GetById(id string) ([]byte, error) {
 	var err error
-	var v *url.Values
-	var result *fireblocks.VaultAccount
+	//v := make(url.Values)
 	if len(id) == 0 {
 		return nil, fmt.Errorf("error you have to fil acount id")
 	}
 	path := fmt.Sprintf(`/vault/accounts/%s`, id)
-	response, err := fireblocks.ClientGet(path, v)
+	response, err := fireblocks.ClientGet(path, nil)
 	if err != nil {
 		return nil, err
 	}
-	err = json.Unmarshal(response, &result)
+	return response, nil
+}
+
+func Create(params *fireblocks.VaultAccountsJSONBody) ([]byte, error) {
+	var err error
+	//var result *fireblocks.VaultAccount
+	response, err := fireblocks.ClientPost("/vault/accounts", params)
 	if err != nil {
 		return nil, err
 	}
-	return result, nil
+	//err = json.Unmarshal(response, &result)
+	return response, nil
 }

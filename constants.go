@@ -1,5 +1,22 @@
 package fireblocks
 
+type AuthorizationInfoLogic string
+
+// SignedMessageAlgorithm defines model for SignedMessage.Algorithm.
+type SignedMessageAlgorithm string
+
+// TransactionOperation defines model for TransactionOperation.
+type TransactionOperation string
+
+// TransactionRequestFeeLevel defines model for TransactionRequest.FeeLevel.
+type TransactionRequestFeeLevel string
+
+type TransactionResponseStatus string
+type TransactionSubStatus string
+type TransferPeerPathType string
+type TransferPeerPathResponseVirtualType string
+type VaultWalletAddressAddressFormat string
+
 const (
 	ApiKeyAuthScopes      = "ApiKeyAuth.Scopes"
 	BearerTokenAuthScopes = "bearerTokenAuth.Scopes"

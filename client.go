@@ -20,13 +20,14 @@ func GetPath(path string) string {
 	return fmt.Sprintf(`/%s%s`, APIVERSION, path)
 }
 
-func ClientGet(path string, v *url.Values) ([]byte, error) {
+func ClientGet(path string, v url.Values) ([]byte, error) {
 	query := ""
 	path = GetPath(path)
 	apiUrl := fmt.Sprintf(`%s%s`, APIURL, path)
 	if v != nil {
 		query = v.Encode()
-		apiUrl = fmt.Sprintf(`%s%s?%s`, APIURL, path, query)
+		path = fmt.Sprintf(`%s?%s`, path, query)
+		apiUrl = fmt.Sprintf(`%s%s`, APIURL, path)
 	}
 	return doRequest(http.MethodGet, path, apiUrl, []byte(query))
 }
@@ -36,13 +37,13 @@ func ClientPost(path string, v interface{}) ([]byte, error) {
 	path = GetPath(path)
 	apiUrl := fmt.Sprintf(`%s%s`, APIURL, path)
 	if v != nil {
-		jsonData, err := json.Marshal(v)
+		jd, err := json.Marshal(v)
 		if err != nil {
 			return result, err
 		}
-		return doRequest(http.MethodPost, path, apiUrl, jsonData)
+		return doRequest(http.MethodPost, path, apiUrl, jd)
 	}
-	return result, fmt.Errorf(`Sorry for post request must have json data`)
+	return result, fmt.Errorf(`Error, the POST request must have json data`)
 }
 
 func ClientPut(path string, v interface{}) ([]byte, error) {
@@ -56,10 +57,10 @@ func ClientPut(path string, v interface{}) ([]byte, error) {
 		}
 		return doRequest(http.MethodPut, path, apiUrl, jsonData)
 	}
-	return result, fmt.Errorf(`Sorry for post request must have json data`)
+	return result, fmt.Errorf(`Error, the PUT request must have json data`)
 }
 
-func ClientDelt(path string) ([]byte, error) {
+func ClientDel(path string) ([]byte, error) {
 	path = GetPath(path)
 	apiUrl := fmt.Sprintf(`%s%s`, APIURL, path)
 	return doRequest(http.MethodDelete, path, apiUrl, []byte(``))
@@ -73,15 +74,14 @@ func doRequest(method string, path string, apiUrl string, body []byte) ([]byte, 
 		return result, err
 	}
 	client := &http.Client{}
-	var jsonData *bytes.Buffer
-	if method == http.MethodGet {
-		jsonData = bytes.NewBufferString("")
-	} else {
-		jsonData = bytes.NewBuffer(body)
+	values := []byte(``)
+	if method != http.MethodGet {
+		values = body
 	}
-	req, _ := http.NewRequest(method, apiUrl, jsonData)
+	req, _ := http.NewRequest(method, apiUrl, bytes.NewBuffer(values))
 	req.Header.Add("X-API-Key", ApiKey)
 	req.Header.Add("Authorization", fmt.Sprintf(`Bearer %s`, jwtToken))
+	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
 	response, err := client.Do(req)
 	if err != nil {
 		fmt.Println("Error do request", err)

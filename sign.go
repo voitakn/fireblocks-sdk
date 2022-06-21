@@ -12,7 +12,7 @@ import (
 
 // PrivateKey is the Private key used globally in the binding.
 var (
-	PrivateKey = ""
+	PrivateKey = []byte(``)
 	ApiKey     = ""
 )
 
@@ -26,18 +26,20 @@ func CreateJwt(path string, body []byte) (string, error) {
 		"exp":      exp.Unix(),
 		"sub":      ApiKey,
 		"bodyHash": fmt.Sprintf("%x", sha256.Sum256(body)),
-		//crypto.createHash("sha256").update(JSON.stringify(bodyJson || "")).digest().toString("hex")
 	})
 }
 
-func signJwt(tokenData jwt.MapClaims) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodRS256, tokenData)
-	tokenString, err := token.SignedString(PrivateKey)
+func signJwt(claims jwt.MapClaims) (string, error) {
+	key, err := jwt.ParseRSAPrivateKeyFromPEM(PrivateKey)
+	if err != nil {
+		return "", fmt.Errorf("create: parse key: %w", err)
+	}
+	token, err := jwt.NewWithClaims(jwt.SigningMethodRS256, claims).SignedString(key)
 	if err != nil {
 		fmt.Errorf("Something went Wrong: %s", err.Error())
 		return "", err
 	}
-	return tokenString, nil
+	return token, nil
 }
 
 func ComputeSignature(t time.Time, payload []byte, secret string) []byte {
@@ -59,9 +61,4 @@ func encryptPassword2(password string) string {
 	h := sha256.Sum256([]byte(password))
 	fmt.Println()
 	return "{SHA256}" + base64.StdEncoding.EncodeToString(h[:])
-}
-
-func main() {
-	fmt.Println(encryptPassword("abcd1234"))
-	fmt.Println(encryptPassword2(`{"main": "test"}`))
 }

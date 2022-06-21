@@ -1,5 +1,51 @@
 package fireblocks
 
+// Int64 returns a pointer to the int64 value passed in.
+func Int64(v int64) *int64 {
+	return &v
+}
+
+// Int64Value returns the value of the int64 pointer passed in or
+// 0 if the pointer is nil.
+func Int64Value(v *int64) int64 {
+	if v != nil {
+		return *v
+	}
+	return 0
+}
+
+// Int64Slice returns a slice of int64 pointers given a slice of int64s.
+func Int64Slice(v []int64) []*int64 {
+	out := make([]*int64, len(v))
+	for i := range v {
+		out[i] = &v[i]
+	}
+	return out
+}
+
+// String returns a pointer to the string value passed in.
+func String(v string) *string {
+	return &v
+}
+
+// StringValue returns the value of the string pointer passed in or
+// "" if the pointer is nil.
+func StringValue(v *string) string {
+	if v != nil {
+		return *v
+	}
+	return ""
+}
+
+// StringSlice returns a slice of string pointers given a slice of strings.
+func StringSlice(v []string) []*string {
+	out := make([]*string, len(v))
+	for i := range v {
+		out[i] = &v[i]
+	}
+	return out
+}
+
 // Error defines model for Error.
 type Error struct {
 	Code    float64 `json:"code,omitempty"`
@@ -36,45 +82,3 @@ type VaultAccount2 struct {
 	CustomerRefId string    `json:"customerRefId"`
 	AutoFuel      bool      `json:"autoFuel"`
 }
-
-/*
-export interface AssetResponse {
-    id: string;
-    total: string;
-	balance?: string;
-	lockedAmount?: string;
-	available: string;
-	pending: string;
-	selfStakedCPU?: string;
-	selfStakedNetwork?: string;
-	pendingRefundCPU?: string;
-	pendingRefundNetwork?: string;
-	totalStakedCPU?: string;
-	totalStakedNetwork?: string;
-	rewardInfo?: BalanceRewardInfo;
-	blockHeight?: string;
-	blockHash?: string;
-	allocatedBalances?: {
-		allocationId: string;
-		thirdPartyAccountId?: string;
-		affiliation?: VirtualAffiliation;
-		virtualType?: VirtualType;
-		total: string;
-		available: string;
-		pending?: string;
-		frozen?: string;
-		locked?: string;
-	}[];
-}
-*/
-
-/*
-export interface VaultAccountResponse {
-    id: string;
-    name: string;
-    hiddenOnUI: boolean;
-    assets: AssetResponse[];
-    customerRefId?: string;
-    autoFuel: boolean;
-}
-*/
