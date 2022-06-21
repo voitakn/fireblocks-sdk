@@ -1,8 +1,8 @@
 package deposit
 
 import (
-	fireblocks "fireblocks-sdk"
 	"fmt"
+	"github.com/voitakn/fireblocks-sdk"
 )
 
 func Create(symbol string, params *fireblocks.CreateDeposit) ([]byte, error) {
