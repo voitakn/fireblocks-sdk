@@ -1,4 +1,4 @@
-module fireblocks-sdk
+module github.com/voitakn/fireblocks-sdk
 
 go 1.18
 
