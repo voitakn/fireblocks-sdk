@@ -1,8 +1,8 @@
 package account
 
 import (
-	"fireblocks-sdk"
 	"fmt"
+	"github.com/voitakn/fireblocks-sdk"
 	"net/url"
 )
 

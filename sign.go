@@ -2,11 +2,17 @@ package fireblocks
 
 import (
 	"crypto/hmac"
+	"crypto/rand"
+	"crypto/rsa"
 	"crypto/sha256"
+	"crypto/sha512"
+	"crypto/x509"
 	"encoding/base64"
+	"encoding/pem"
 	"fmt"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
+	"log"
 	"time"
 )
 
@@ -61,4 +67,57 @@ func encryptPassword2(password string) string {
 	h := sha256.Sum256([]byte(password))
 	fmt.Println()
 	return "{SHA256}" + base64.StdEncoding.EncodeToString(h[:])
+}
+
+func SignatureVerify(signature string, body []byte, key []byte) (bool, error) {
+	block, _ := pem.Decode(key)
+	if block == nil {
+		return false, fmt.Errorf("public key error")
+	}
+	pubInterface, err := x509.ParsePKIXPublicKey(block.Bytes)
+	if err != nil {
+		return false, err
+	}
+	pub := pubInterface.(*rsa.PublicKey)
+	bodySig, err := rsa.EncryptOAEP(
+		sha512.New(),
+		rand.Reader,
+		pub,
+		body,
+		nil)
+	if err != nil {
+		return false, fmt.Errorf("error rsa encrypt signature")
+	}
+	log.Println("SignatureVerify = signature", signature)
+	body64 := Base64Enc(bodySig)
+	log.Println("SignatureVerify ==== body64", body64)
+	if signature == body64 {
+		return true, nil
+	}
+	return false, fmt.Errorf("signature was not validated")
+}
+
+func RsaEncrypt(origData []byte, key []byte) ([]byte, error) {
+	block, _ := pem.Decode(key)
+	if block == nil {
+		return nil, fmt.Errorf("public key error")
+	}
+	pubInterface, err := x509.ParsePKIXPublicKey(block.Bytes)
+	if err != nil {
+		return nil, err
+	}
+	pub := pubInterface.(*rsa.PublicKey)
+	return rsa.EncryptPKCS1v15(nil, pub, origData)
+}
+
+func Base64Enc(b1 []byte) string {
+	s1 := base64.StdEncoding.EncodeToString(b1)
+	s2 := ""
+	var LEN int = 76
+	for len(s1) > 76 {
+		s2 = s2 + s1[:LEN] + "\n"
+		s1 = s1[LEN:]
+	}
+	s2 = s2 + s1
+	return s2
 }
