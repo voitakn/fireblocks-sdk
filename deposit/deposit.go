@@ -2,7 +2,7 @@ package deposit
 
 import (
 	"fmt"
-	"github.com/voitakn/fireblocks-sdk/v2/fireblocks"
+	"github.com/voitakn/fireblocks-sdk"
 )
 
 func Create(symbol string, params *fireblocks.CreateDeposit) ([]byte, error) {

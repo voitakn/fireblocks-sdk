@@ -1,6 +1,6 @@
 package transaction
 
-import "github.com/voitakn/fireblocks-sdk/v2/fireblocks"
+import "github.com/voitakn/fireblocks-sdk"
 
 func Create(params *fireblocks.TransactionRequest) ([]byte, error) {
 	var err error

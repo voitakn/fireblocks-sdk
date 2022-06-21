@@ -2,7 +2,7 @@ package account
 
 import (
 	"fmt"
-	"github.com/voitakn/fireblocks-sdk/v2/fireblocks"
+	"github.com/voitakn/fireblocks-sdk"
 	"net/url"
 )
 

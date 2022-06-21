@@ -2,7 +2,7 @@ package external
 
 import (
 	"fmt"
-	"github.com/voitakn/fireblocks-sdk/v2/fireblocks"
+	"github.com/voitakn/fireblocks-sdk"
 )
 
 func WalletCreate(params *fireblocks.WalletRequest) ([]byte, error) {
