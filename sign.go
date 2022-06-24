@@ -12,7 +12,6 @@ import (
 	"fmt"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
-	"log"
 	"time"
 )
 
@@ -88,9 +87,9 @@ func SignatureVerify(signature string, body []byte, key []byte) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("error rsa encrypt signature")
 	}
-	log.Println("SignatureVerify = signature", signature)
+	//log.Println("SignatureVerify = signature", signature)
 	body64 := Base64Enc(bodySig)
-	log.Println("SignatureVerify ==== body64", body64)
+	//log.Println("SignatureVerify ==== body64", body64)
 	if signature == body64 {
 		return true, nil
 	}
